@@ -5,6 +5,8 @@ import scapy.all as scapy
 import argparse
 import datetime
 import socket
+# Import used format data into cleaner, tabular output
+from tabulate import tabulate
 
 # Function to parse command-line arguments
 def get_args():
@@ -37,21 +39,26 @@ def scan(ip):
     for element in answered_list:
         ip_address = element[1].psrc
         mac_address = element[1].hwsrc
+        hostname = resolve_hostname(ip_address)  # Resolve the hostname
         open_ports = scan_ports(ip_address)  # Scan ports on the device
-        client = {"ip": ip_address, "mac": mac_address, "ports": open_ports}
+        client = {
+            "ip": ip_address,
+            "mac": mac_address,
+            "hostname": hostname,
+            "ports": open_ports
+        }
         result.append(client)
 
     return result
 
 # Function to show the scan results to the user
 def show_result(result):
-    print("-------------------------")
-    print("IP Address\t\tMAC Address\t\tOpen Ports")
-    print("-------------------------")
+    table = []
     for client in result:
         ports = ", ".join(map(str, client["ports"])) if client["ports"] else "None"
-        print(f"{client['ip']}\t\t{client['mac']}\t\t{ports}")
-
+        table.append([client['ip'], client['mac'], client['hostname'], ports])
+    
+    print(tabulate(table, headers=["IP Address", "MAC Address", "Hostname", "Open Ports"], tablefmt="grid"))
 
 # Function to save results of scan to a .txt file
 def save_result(result):
@@ -64,11 +71,11 @@ def save_result(result):
     # Save the results to the file
     with open(file_name, "w") as file:
         file.write("-------------------------\n")
-        file.write("IP Address\t\tMAC Address\t\tOpen Ports\n")
+        file.write("IP Address\t\tMAC Address\t\tHostname\t\tOpen Ports\n")
         file.write("-------------------------\n")
         for client in result:
             ports = ", ".join(map(str, client["ports"])) if client["ports"] else "None"
-            file.write(f"{client['ip']}\t\t{client['mac']}\t\t{ports}\n")
+            file.write(f"{client['ip']}\t\t{client['mac']}\t\t{client['hostname']}\t\t{ports}\n")
     
     print(f"[+] Results saved to {file_name}")
 
@@ -90,6 +97,16 @@ def scan_ports(ip, ports=[22, 80, 443]):  # Default to common ports
         except:
             continue
     return open_ports
+
+# Function to get hostname
+def resolve_hostname(ip):
+    try:
+        # Get the hostname for the given IP
+        hostname = socket.gethostbyaddr(ip)[0]
+    except socket.herror:
+        # If resolution fails, return "Unknown"
+        hostname = "Unknown"
+    return hostname
 
 # Main script logic
 options = get_args()
