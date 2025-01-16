@@ -10,7 +10,6 @@ purposes and to gain a better understanding of network security concepts.
 - **Formatted Terminal Output**: Provides a clean, aligned, and professional output.
 
 # Setup Instructions
-
 1. Clone the repository:
    ```bash
    git clone https://github.com/b-getz/CustomNetworkScanner.git
