@@ -15,10 +15,10 @@ purposes and to gain a better understanding of network security concepts.
    ```bash
    git clone https://github.com/b-getz/CustomNetworkScanner.git
    cd CustomNetworkScanner
-3. Install dependencies from the requirements.txt file provided.
+2. Install dependencies from the requirements.txt file provided.
    ```bash
    pip install -r requirements.txt
-4. Run the script:
+3. Run the script:
    Use the following command to run the tool, replacing <target IP/range> with the actual target IP or range.
    ```bash
    python CustomNetworkScanner.py -t <target IP/range>
